@@ -2288,7 +2288,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1671004076120),
+    lastupdate: new Date(1671006207198),
     cdn: {
       izitoast_css: 'https://cdn.bootcdn.net/ajax/libs/izitoast/1.4.0/css/iziToast.min.css',
       izitoast_js: 'https://cdn.bootcdn.net/ajax/libs/izitoast/1.4.0/js/iziToast.min.js',
@@ -3109,7 +3109,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     <p>
       <i class="fa-solid fa-eye fa-fw" aria-hidden="true"></i>
       
-      <span id="twikoo_visitors">
+      <span data-path="/2022/12/13/v2/" class="waline-pageview-count">
         <i class="fa-solid fa-loader fa-spin fa-fw" aria-hidden="true"></i>
       </span>
         
@@ -3123,6 +3123,22 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
         
           
             
+<div class="new-meta-item comments-count">
+   
+  
+  <a href="/2022/12/13/v2/#comments">
+    <i class="fa-solid fa-comment-dots fa-fw"></i>
+    <p>
+      <span data-path="/2022/12/13/v2/" class="waline-comment-count">
+        <i class="fa-solid fa-loader fa-spin fa-fw" aria-hidden="true"></i>
+      </span> 
+       
+        <span class="leancloud-comments-count">&nbsp;条评论</span> 
+       
+    </p>
+  </a>
+</div>
+
 
           
         
@@ -4858,46 +4874,51 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
       <script>
-  volantis.layoutHelper("comments",`<div id="twikoo_container"><i class="fa-solid fa-cog fa-spin fa-fw fa-2x"></i></div>`)
-  function load_twikoo() {
-    if(!document.querySelectorAll("#twikoo_container")[0])return;
-    volantis.js("https://cdn.bootcdn.net/ajax/libs/twikoo/1.6.7/twikoo.min.js", pjax_twikoo)
-  }
-  function pjax_twikoo() {
-    if(!document.querySelectorAll("#twikoo_container")[0])return;
+  volantis.layoutHelper("comments",`<div id="waline"><i class="fa-solid fa-cog fa-spin fa-fw fa-2x"></i></div>`)
+  
+  function pjax_waline() {
+    if(!document.querySelector("#waline"))return;
+    let locale = {};
     let path = pdata.commentPath;
-    let placeholder = pdata.commentPlaceholder || "" || "";
+    let pagePlaceholder = pdata.commentPlaceholder || "快来评论吧~";
     if (path.length == 0) {
       let defaultPath = '';
       path = defaultPath || decodeURI(window.location.pathname);
     }
-    twikoo.init(Object.assign(Object.assign({"path":null,"envId":"http://38.60.10.232:8080","placeholder":null,"visitor":true}, {
-      el: '#twikoo_container',
-      path: path,
-      placeholder: placeholder,
-      onCommentLoaded: function() {
-        if(typeof VolantisFancyBox === "undefined") {
-          const checkFancyBox = setInterval(() => {
-            if(typeof VolantisFancyBox === "undefined") return;
-            clearInterval(checkFancyBox);
-            VolantisFancyBox.groupBind('.tk-content img:not([class*="emo"])', 'Comments');
-          })
-        } else {
-          VolantisFancyBox.groupBind('.tk-content img:not([class*="emo"])', 'Comments');
-        }
-      }
-    }),pdata.commentConfig))
-  }
-  load_twikoo();
-  volantis.pjax.push(()=>{
-    if (typeof twikoo == "undefined") {
-      load_twikoo();
-    } else {
-      pjax_twikoo();
+    if(pagePlaceholder.length != 0) {
+      locale.placeholder = pagePlaceholder;
     }
-  },'twikoo');
-</script>
 
+    try {
+      Waline.init(Object.assign(Object.assign({"path":null,"placeholder":"快来评论吧~","serverURL":"http://talk.yingzixiaodian.top/","imageUploader":{"api":null,"token":null,"resp":null},"pageview":true,"comment":true,"imageHosting":"https://7bu.top/api/upload"}, {
+        el: '#waline',
+        path: path,
+        // https://github.com/volantis-x/hexo-theme-volantis/issues/713
+        
+        locale,
+      }),pdata.commentConfig));
+    } catch (error) {
+      alert(`Waline ${error}`)
+    }
+    fancybox_waline()
+  }
+
+  function fancybox_waline() {
+    if(typeof VolantisFancyBox === "undefined") {
+      const checkFancyBox = setInterval(() => {
+        if(typeof VolantisFancyBox === "undefined") return;
+        clearInterval(checkFancyBox);
+        VolantisFancyBox.bind('#waline .wl-content img:not(.wl-emoji)');
+      })
+    } else {
+      VolantisFancyBox.bind('#waline .wl-content img:not(.wl-emoji)');
+    }
+  }
+
+  volantis.css('https://cdn.bootcdn.net/ajax/libs/waline/2.6.3/waline.min.css')
+  volantis.js('https://cdn.bootcdn.net/ajax/libs/waline/2.6.3/waline.min.js').then(pjax_waline)
+  volantis.pjax.push(pjax_waline);
+</script>
     
 
 
