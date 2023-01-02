@@ -1763,24 +1763,6 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   window.volantis = {}; // volantis 全局变量
   volantis.debug = "env"; // 调试模式
   volantis.dom = {}; // 页面Dom see: /source/js/app.js etc.
-  /******************** volantis.EventListener ********************************/
-  // 事件监听器 see: /source/js/app.js
-  volantis.EventListener = {}
-  // 这里存放pjax切换页面时将被移除的事件监听器
-  volantis.EventListener.list = []
-  //构造方法
-  function volantisEventListener(type, f, ele) {
-    this.type = type
-    this.f = f
-    this.ele = ele
-  }
-  // 移除事件监听器
-  volantis.EventListener.remove = () => {
-    volantis.EventListener.list.forEach(function (i) {
-      i.ele.removeEventListener(i.type, i.f, false)
-    })
-    volantis.EventListener.list = []
-  }
   /******************** volantis.dom.$ ********************************/
   // 注：这里没有选择器，也没有forEach一次只处理一个dom，这里重新封装主题常用的dom方法，返回的是dom对象，对象包含了以下方法，同时保留dom的原生API
   function volantisDom(ele) {
@@ -1813,12 +1795,8 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       return this.ele
     }
     // ==============================================================
-    // 参数 r 为 true 表示pjax切换页面时事件监听器将被移除，false不移除
-    this.ele.on = (c, f, r = 1) => {
+    this.ele.on = (c, f) => {
       this.ele.addEventListener(c, f, false)
-      if (r) {
-        volantis.EventListener.list.push(new volantisEventListener(c, f, this.ele))
-      }
       return this.ele
     }
     this.ele.click = (f, r) => {
@@ -1893,22 +1871,6 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       };
     }
   }
-  /******************** Pjax ********************************/
-  // /layout/_plugins/pjax/index.ejs
-  // volantis.pjax.send(callBack[,"callBackName"]) 传入pjax:send回调函数
-  // volantis.pjax.push(callBack[,"callBackName"]) 传入pjax:complete回调函数
-  // volantis.pjax.error(callBack[,"callBackName"]) 传入pjax:error回调函数
-  volantis.pjax = {};
-  volantis.pjax.method = {
-    complete: new RunItem(),
-    error: new RunItem(),
-    send: new RunItem(),
-  };
-  volantis.pjax = Object.assign(volantis.pjax, {
-    push: volantis.pjax.method.complete.push,
-    error: volantis.pjax.method.error.push,
-    send: volantis.pjax.method.send.push,
-  });
   /******************** RightMenu ********************************/
   // volantis.rightmenu.handle(callBack[,"callBackName"]) 外部菜单项控制
   // 可在 volantis.mouseEvent 处获取右键事件
@@ -1940,13 +1902,11 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   /********************脚本动态加载函数********************************/
   // volantis.js(src, cb)  cb 可以传入onload回调函数 或者 JSON对象 例如: volantis.js("src", ()=>{}) 或 volantis.js("src", {defer:true,onload:()=>{}})
   // volantis.css(src)
-
   // 返回Promise对象，如下方法同步加载资源，这利于处理文件资源之间的依赖关系，例如：APlayer 需要在 MetingJS 之前加载
   // (async () => {
   //     await volantis.js("...theme.plugins.aplayer.js.aplayer...")
   //     await volantis.js("...theme.plugins.aplayer.js.meting...")
   // })();
-
   // 已经加入了setTimeout
   volantis.js = (src, cb) => {
     return new Promise(resolve => {
@@ -2016,7 +1976,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   }
   /************************ layoutHelper *****************************************/
   volantis.layoutHelper = (helper, html, opt) => {
-    opt = Object.assign({ clean: false, pjax: true }, opt)
+    opt = Object.assign({ clean: false}, opt)
     function myhelper(helper, html, clean) {
       volantis.tempDiv = document.createElement("div");
       volantis.tempDiv.innerHTML = html;
@@ -2029,11 +1989,6 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       }
     }
     myhelper(helper, html, opt.clean)
-    if (opt.pjax) {
-      volantis.pjax.push(() => {
-        myhelper(helper, html, opt.clean)
-      }, "layoutHelper-" + helper)
-    }
   }
   /****************************** 滚动事件处理 ****************************************/
   volantis.scroll = {
@@ -2172,7 +2127,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1672663437197),
+    lastupdate: new Date(1672671665534),
     cdn: {
       izitoast_css: 'https://cdn.bootcdn.net/ajax/libs/izitoast/1.4.0/css/iziToast.min.css',
       izitoast_js: 'https://cdn.bootcdn.net/ajax/libs/izitoast/1.4.0/js/iziToast.min.js',
@@ -4332,6 +4287,33 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
 
+   <script type="text/javascript">
+  function pjax_scrollrebeal() {
+    ScrollReveal().reveal("#l_main .reveal", {
+      distance: "32px",
+      duration: "800",
+      interval: "20",
+      scale: "1",
+      easing: "ease-out",
+    });
+  }
+  function init_scrollrebeal() {
+    if (typeof ScrollReveal == "undefined") {
+      volantis.requestAnimationFrame(init_scrollrebeal);
+    } else {
+      pjax_scrollrebeal();
+    }
+  }
+  volantis.js("https://cdn.bootcdn.net/ajax/libs/scrollReveal.js/4.0.9/scrollreveal.min.js");
+  document.addEventListener("DOMContentLoaded", init_scrollrebeal)
+  volantis.pjax.push(
+    pjax_scrollrebeal,
+    "pjax_scrollrebeal",
+    (setRequestAnimationFrame = false)
+  );
+</script>
+
+
 
 
   <script>
@@ -4544,7 +4526,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
   <script>
-  let imgs = ["https://cdn.fiee.tk/img/background5.webp","https://cdn.fiee.tk/img/background3.webp","https://cdn.fiee.tk/img/background7.webp","https://cdn.fiee.tk/img/background9.webp","https://cdn.fiee.tk/img/background1.webp","https://static.codemao.cn/coco/player/unstable/rkdB6ZCBi.image/jpeg?hash=lj7KdlqsX-TRk7Ob-QgJpQVZwAzc","https://cdn.fiee.tk/img/background2.webp","https://static.codemao.cn/coco/player/unstable/r1igi8ePi.image/jpeg?hash=llXnZHYbGKXaP67v8lN4AxbR8Os7","https://cdn.fiee.tk/img/background8.webp","https://cdn.fiee.tk/img/background4.webp","https://cdn.fiee.tk/img/background6.webp"];
+  let imgs = ["https://cdn.fiee.tk/img/background8.webp","https://cdn.fiee.tk/img/background3.webp","https://cdn.fiee.tk/img/background2.webp","https://cdn.fiee.tk/img/background7.webp","https://cdn.fiee.tk/img/background5.webp","https://static.codemao.cn/coco/player/unstable/r1igi8ePi.image/jpeg?hash=llXnZHYbGKXaP67v8lN4AxbR8Os7","https://static.codemao.cn/coco/player/unstable/rkdB6ZCBi.image/jpeg?hash=lj7KdlqsX-TRk7Ob-QgJpQVZwAzc","https://cdn.fiee.tk/img/background4.webp","https://cdn.fiee.tk/img/background9.webp","https://cdn.fiee.tk/img/background1.webp","https://cdn.fiee.tk/img/background6.webp"];
   let index = 0;
   let IntervalParallax = null;
 
