@@ -625,87 +625,6 @@ button {
   -moz-opacity: 1;
   border-bottom: 2px solid var(--color-site-inner);
 }
-.cover-wrapper.dock .menu,
-.cover-wrapper.featured .menu,
-.cover-wrapper.focus .menu {
-  border-radius: 6px;
-  -webkit-border-radius: 6px;
-}
-.cover-wrapper.dock .menu .list-h a,
-.cover-wrapper.featured .menu .list-h a,
-.cover-wrapper.focus .menu .list-h a {
-  -webkit-box-direction: normal;
-  -moz-box-direction: normal;
-  -webkit-box-orient: vertical;
-  -moz-box-orient: vertical;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  align-items: center;
-  padding: 12px;
-  line-height: 24px;
-  border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-bottom: none;
-  text-align: center;
-  align-content: flex-end;
-  color: rgba(68,68,68,0.7);
-  font-size: 1.5rem;
-}
-@media screen and (max-width: 500px) {
-  .cover-wrapper.dock .menu .list-h a,
-  .cover-wrapper.featured .menu .list-h a,
-  .cover-wrapper.focus .menu .list-h a {
-    padding: 12px 8px;
-  }
-}
-.cover-wrapper.dock .menu .list-h a i,
-.cover-wrapper.featured .menu .list-h a i,
-.cover-wrapper.focus .menu .list-h a i {
-  margin: 8px;
-}
-.cover-wrapper.dock .menu .list-h a p,
-.cover-wrapper.featured .menu .list-h a p,
-.cover-wrapper.focus .menu .list-h a p {
-  font-size: 0.875rem;
-}
-.cover-wrapper.dock .menu .list-h a.active,
-.cover-wrapper.featured .menu .list-h a.active,
-.cover-wrapper.focus .menu .list-h a.active {
-  background: var(--color-card);
-  backdrop-filter: none;
-}
-.cover-wrapper.dock .menu .list-h a.active i,
-.cover-wrapper.featured .menu .list-h a.active i,
-.cover-wrapper.focus .menu .list-h a.active i,
-.cover-wrapper.dock .menu .list-h a.active i+p,
-.cover-wrapper.featured .menu .list-h a.active i+p,
-.cover-wrapper.focus .menu .list-h a.active i+p {
-  color: #3dd9b6;
-}
-.cover-wrapper.dock .menu .list-h a.active img+p,
-.cover-wrapper.featured .menu .list-h a.active img+p,
-.cover-wrapper.focus .menu .list-h a.active img+p {
-  color: var(--color-text);
-}
-.cover-wrapper.dock .menu .list-h a:hover,
-.cover-wrapper.featured .menu .list-h a:hover,
-.cover-wrapper.focus .menu .list-h a:hover {
-  background: var(--color-card);
-}
-.cover-wrapper.featured .menu .list-h {
-  margin: -2px;
-}
-.cover-wrapper.featured .menu .list-h a {
-  margin: 2px;
-  background: rgba(255,255,255,0.5);
-}
-@supports (backdrop-filter: blur(20px)) {
-  .cover-wrapper.featured .menu .list-h a {
-    background: rgba(255,255,255,0.5);
-    backdrop-filter: saturate(200%) blur(20px);
-  }
-}
 .cover-wrapper #parallax-window {
   position: absolute;
   width: 100%;
@@ -2251,7 +2170,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1672660597275),
+    lastupdate: new Date(1672660711171),
     cdn: {
       izitoast_css: 'https://cdn.bootcdn.net/ajax/libs/izitoast/1.4.0/css/iziToast.min.css',
       izitoast_js: 'https://cdn.bootcdn.net/ajax/libs/izitoast/1.4.0/js/iziToast.min.js',
@@ -2995,7 +2914,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   
     
       <!-- see: /layout/_partial/scripts/_ctrl/coverCtrl.ejs -->
-      <div id="half" class='cover-wrapper  featured' style="display: ;">
+      <div id="full" class='cover-wrapper  search' style="display: ;">
         
   <div id="parallax-window"></div>
 
@@ -3010,6 +2929,14 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     
   </div>
   <div class='bottom'>
+    
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <input type="text" class="input u-search-input" placeholder="搜点什么吧..." />
+          <i class="icon fa-solid fa-search fa-fw"></i>
+        </form>
+      </div>
+    
     <div class='menu navigation'>
       <div class='list-h'>
         
@@ -3018,21 +2945,21 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
               
               
               active-action="action-friends">
-              <img src='https://gcore.jsdelivr.net/gh/twitter/twemoji@13.0/assets/svg/1f396.svg'><p>友链</p>
+              <p>友链</p>
             </a>
           
             <a target="_blank" rel="noopener" href="https://bbs.flarum.cloud/"
               
               
               active-action="action-https:bbsflarumcloud">
-              <img src='https://gcore.jsdelivr.net/gh/twitter/twemoji@13.0/assets/svg/1f389.svg'><p>论坛</p>
+              <p>论坛</p>
             </a>
           
             <a href="/archives/"
               
               
               active-action="action-archives">
-              <img src='https://gcore.jsdelivr.net/gh/twitter/twemoji@13.0/assets/svg/1f4f0.svg'><p>博客</p>
+              <p>博客</p>
             </a>
           
         
@@ -3041,7 +2968,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   </div>
 </div>
 
-        <div id="scroll-down" style="display: none;"><i class="fa fa-chevron-down scroll-down-effects"></i></div>
+        <div id="scroll-down" style="display: ;"><i class="fa fa-chevron-down scroll-down-effects"></i></div>
       </div>
     
   
@@ -3512,9 +3439,9 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       // cover
       var cover_wrapper=document.querySelector('#l_cover .cover-wrapper');
       var scroll_down=document.getElementById('scroll-down');
-      cover_wrapper.id="half";
+      cover_wrapper.id="full";
       cover_wrapper.style.display="";
-      scroll_down.style.display="none";
+      scroll_down.style.display="";
     
   
 </script>
@@ -4407,7 +4334,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
   <script>
-  let imgs = ["https://cdn.fiee.tk/img/background5.webp","https://cdn.fiee.tk/img/background1.webp","https://cdn.fiee.tk/img/background9.webp","https://static.codemao.cn/coco/player/unstable/r1igi8ePi.image/jpeg?hash=llXnZHYbGKXaP67v8lN4AxbR8Os7","https://static.codemao.cn/coco/player/unstable/rkdB6ZCBi.image/jpeg?hash=lj7KdlqsX-TRk7Ob-QgJpQVZwAzc","https://cdn.fiee.tk/img/background2.webp","https://cdn.fiee.tk/img/background6.webp","https://cdn.fiee.tk/img/background7.webp","https://cdn.fiee.tk/img/background8.webp","https://cdn.fiee.tk/img/background4.webp","https://cdn.fiee.tk/img/background3.webp"];
+  let imgs = ["https://cdn.fiee.tk/img/background6.webp","https://cdn.fiee.tk/img/background1.webp","https://static.codemao.cn/coco/player/unstable/rkdB6ZCBi.image/jpeg?hash=lj7KdlqsX-TRk7Ob-QgJpQVZwAzc","https://cdn.fiee.tk/img/background3.webp","https://cdn.fiee.tk/img/background7.webp","https://static.codemao.cn/coco/player/unstable/r1igi8ePi.image/jpeg?hash=llXnZHYbGKXaP67v8lN4AxbR8Os7","https://cdn.fiee.tk/img/background4.webp","https://cdn.fiee.tk/img/background9.webp","https://cdn.fiee.tk/img/background8.webp","https://cdn.fiee.tk/img/background5.webp","https://cdn.fiee.tk/img/background2.webp"];
   let index = 0;
   let IntervalParallax = null;
 
