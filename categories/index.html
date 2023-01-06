@@ -25,7 +25,9 @@
   <!-- import head_begin begin -->
   <!-- import head_begin end -->
   <!-- Custom Files headBegin begin-->
-  
+  <script src="https://cdn.fiee.tk/js/diaoluo.js"></script>
+<script src="https://cdn.fiee.tk/js/darkmode.js"></script>
+<link rel="stylesheet" href="https://cdn.fiee.tk/css/darkmode.css" type="text/css"/>
   <!-- Custom Files headBegin end-->
     <link rel="shortcut icon" type='image/x-icon' href="https://static.codemao.cn/coco/player/unstable/SJBAwhdHj.image/x-icon?hash=FoRRKUrBAKQ2bBCKAC9wXjlW9A0m">
   <link rel="preload" href="/css/style.css" as="style">
@@ -1763,6 +1765,24 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   window.volantis = {}; // volantis 全局变量
   volantis.debug = "env"; // 调试模式
   volantis.dom = {}; // 页面Dom see: /source/js/app.js etc.
+  /******************** volantis.EventListener ********************************/
+  // 事件监听器 see: /source/js/app.js
+  volantis.EventListener = {}
+  // 这里存放pjax切换页面时将被移除的事件监听器
+  volantis.EventListener.list = []
+  //构造方法
+  function volantisEventListener(type, f, ele) {
+    this.type = type
+    this.f = f
+    this.ele = ele
+  }
+  // 移除事件监听器
+  volantis.EventListener.remove = () => {
+    volantis.EventListener.list.forEach(function (i) {
+      i.ele.removeEventListener(i.type, i.f, false)
+    })
+    volantis.EventListener.list = []
+  }
   /******************** volantis.dom.$ ********************************/
   // 注：这里没有选择器，也没有forEach一次只处理一个dom，这里重新封装主题常用的dom方法，返回的是dom对象，对象包含了以下方法，同时保留dom的原生API
   function volantisDom(ele) {
@@ -1795,8 +1815,12 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       return this.ele
     }
     // ==============================================================
-    this.ele.on = (c, f) => {
+    // 参数 r 为 true 表示pjax切换页面时事件监听器将被移除，false不移除
+    this.ele.on = (c, f, r = 1) => {
       this.ele.addEventListener(c, f, false)
+      if (r) {
+        volantis.EventListener.list.push(new volantisEventListener(c, f, this.ele))
+      }
       return this.ele
     }
     this.ele.click = (f, r) => {
@@ -1871,6 +1895,22 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       };
     }
   }
+  /******************** Pjax ********************************/
+  // /layout/_plugins/pjax/index.ejs
+  // volantis.pjax.send(callBack[,"callBackName"]) 传入pjax:send回调函数
+  // volantis.pjax.push(callBack[,"callBackName"]) 传入pjax:complete回调函数
+  // volantis.pjax.error(callBack[,"callBackName"]) 传入pjax:error回调函数
+  volantis.pjax = {};
+  volantis.pjax.method = {
+    complete: new RunItem(),
+    error: new RunItem(),
+    send: new RunItem(),
+  };
+  volantis.pjax = Object.assign(volantis.pjax, {
+    push: volantis.pjax.method.complete.push,
+    error: volantis.pjax.method.error.push,
+    send: volantis.pjax.method.send.push,
+  });
   /******************** RightMenu ********************************/
   // volantis.rightmenu.handle(callBack[,"callBackName"]) 外部菜单项控制
   // 可在 volantis.mouseEvent 处获取右键事件
@@ -1976,7 +2016,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   }
   /************************ layoutHelper *****************************************/
   volantis.layoutHelper = (helper, html, opt) => {
-    opt = Object.assign({ clean: false}, opt)
+    opt = Object.assign({ clean: false, pjax: true }, opt)
     function myhelper(helper, html, clean) {
       volantis.tempDiv = document.createElement("div");
       volantis.tempDiv.innerHTML = html;
@@ -1989,6 +2029,11 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       }
     }
     myhelper(helper, html, opt.clean)
+    if (opt.pjax) {
+      volantis.pjax.push(() => {
+        myhelper(helper, html, opt.clean)
+      }, "layoutHelper-" + helper)
+    }
   }
   /****************************** 滚动事件处理 ****************************************/
   volantis.scroll = {
@@ -2127,7 +2172,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     root: '/',
     debug: "env",
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1660614606622/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1672925440091),
+    lastupdate: new Date(1672975432753),
     cdn: {
       izitoast_css: 'https://cdn.bootcdn.net/ajax/libs/izitoast/1.4.0/css/iziToast.min.css',
       izitoast_js: 'https://cdn.bootcdn.net/ajax/libs/izitoast/1.4.0/js/iziToast.min.js',
@@ -4073,7 +4118,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
   <script>
-  let imgs = ["https://cdn.fiee.tk/img/background3.webp","https://cdn.fiee.tk/img/background7.webp","https://cdn.fiee.tk/img/background9.webp","https://static.codemao.cn/coco/player/unstable/r1igi8ePi.image/jpeg?hash=llXnZHYbGKXaP67v8lN4AxbR8Os7","https://cdn.fiee.tk/img/background5.webp","https://cdn.fiee.tk/img/background1.webp","https://cdn.fiee.tk/img/background2.webp","https://static.codemao.cn/coco/player/unstable/rkdB6ZCBi.image/jpeg?hash=lj7KdlqsX-TRk7Ob-QgJpQVZwAzc","https://cdn.fiee.tk/img/background8.webp","https://cdn.fiee.tk/img/background4.webp","https://cdn.fiee.tk/img/background6.webp"];
+  let imgs = ["https://cdn.fiee.tk/img/background8.webp","https://cdn.fiee.tk/img/background5.webp","https://cdn.fiee.tk/img/background4.webp","https://cdn.fiee.tk/img/background7.webp","https://cdn.fiee.tk/img/background2.webp","https://static.codemao.cn/coco/player/unstable/r1igi8ePi.image/jpeg?hash=llXnZHYbGKXaP67v8lN4AxbR8Os7","https://cdn.fiee.tk/img/background6.webp","https://cdn.fiee.tk/img/background3.webp","https://static.codemao.cn/coco/player/unstable/rkdB6ZCBi.image/jpeg?hash=lj7KdlqsX-TRk7Ob-QgJpQVZwAzc","https://cdn.fiee.tk/img/background9.webp","https://cdn.fiee.tk/img/background1.webp"];
   let index = 0;
   let IntervalParallax = null;
 
